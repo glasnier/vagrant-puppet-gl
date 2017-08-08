@@ -2,27 +2,68 @@
 #
 # Box with essential packages and tools installed via Puppet.
 #
-# NOTE: Make sure you have the base boxes installed...
-# vagrant box add precise64 http://files.vagrantup.com/precise64.box
+# NOTE: Make sure you have the base boxes installed.
 # vagrant box add bento/ubuntu-16.04
+# vagrant box add ubuntu/xenial64
 
 Vagrant.configure("2") do |config|
-  #config.vm.box = "hashicorp/precise64"
-  config.vm.box = "bento/ubuntu-16.04"
-  config.vm.hostname = "my-ubuntu-16_04.box"
-  config.vm.network :private_network, ip: "192.168.0.10"
+  # os boxes
+  config.vm.box         = "bento/ubuntu-16.04"
+  config.vm.box_version = "2.3.8"
+  config.vm.box_url     = "https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box"
 
+  # ubuntu xenial has issues...
+  #config.vm.box         = "ubuntu/xenial64"
+  #config.vm.box_version = "20170803.0.0"
+  #config.vm.box_url     = "https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20170803.0.0/providers/virtualbox.box"
+
+  config.vm.hostname    = "vagrant-ubuntu-16-04-box"
+
+  # network
+  #config.vm.base_mac    = "02C0E23C7112"
+
+  #config.vm.network :private_network, ip: "192.168.0.19", nic_type: "82540EM",
+  #                  virtualbox__intnet: true,
+  #                  virtualbox__nic: "bridged",
+  #                  virtualbox__cableconnected: "on",
+  #                  virtualbox__bridgeadapter: "enp0s31f6",
+  #                  virtualbox__macaddress: "auto"
+
+  # setup to forward port 80 on the VM to port 3000 on local machine
+  #config.vm.forward_port 80, 3000
+
+  # ssh
+  #config.ssh.private_key_path = "/path/to/id_rsa"
+
+  # virtualbox provider
   config.vm.provider :virtualbox do |vb|
-    vb.customize [
-      "modifyvm", :id,
-      "--cpuexecutioncap", "50",
-      "--memory", "256",
+    vb.gui = true
+
+    vb.customize ["modifyvm", :id, "--name", "vagrant-ubuntu-16-04-box"]
+
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50",
+                                   "--memory", "512",
     ]
+
+    #vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
   end
 
+  # shared folders, since agrant 1.1+ used synced folders
+  # config.vm.synced_folder "my_host_shared_folder", "/my_host_shared_folder",
+  #                         create: true, disabled: true
+  # config.vm.synced_folder ".", "/vagrant", type: "nfs"
+
+  # puppet install to guest
+  config.vm.provision "shell", :inline => <<-SHELL
+    apt-get update
+    apt-get install -y puppet
+  SHELL
+
+  # puppet provisioner setup
   config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "puppet/manifests"
-    puppet.manifest_file = "site.pp"
-    puppet.module_path = "puppet/modules"
+    puppet.options          = "--verbose --debug"
+    puppet.environment_path = "puppet"
+    puppet.environment      = "environment"
+    puppet.module_path      = "puppet/modules"
   end
 end
