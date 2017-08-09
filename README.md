@@ -79,7 +79,7 @@ VirutalBox is licensed under the GNU General Public License (GPL) version 2.
 
 ##### Installing VirtualBox
 
-    $ sudo apt-get install virutalbox
+    $ sudo apt-get install virtualbox
 
 
 ### Links
