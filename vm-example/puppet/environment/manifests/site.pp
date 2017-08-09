@@ -15,4 +15,5 @@ File {
   mode  => '0644',
 }
 
+include users
 include baseconfig
