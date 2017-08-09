@@ -8,6 +8,10 @@ Vagrant configuration using Puppet to setup a lot of stuffs.
 
 ### Vagrant
 
+Vagrant is a tool for building and managing virtual machine environments in a
+single workflow.
+
+
 ##### Vagrant basic commands
 
     $ vagrant up                         // to create and deploy the VM
@@ -49,7 +53,7 @@ The Vagrant Puppet provisioner allows you to provision the guest using Puppet,
 specifically by calling puppet apply, without a Puppet Master.
 
 
-##### Installation Puppet
+##### Installing Puppet
 
     $ sudo apt-get install puppet
     $ puppet --version
