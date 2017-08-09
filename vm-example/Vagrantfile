@@ -1,27 +1,39 @@
 # vm-example
 #
-# Box with essential packages and tools installed via Puppet.
+#   Box with essential packages and tools installed via Puppet.
 #
-# NOTE: Make sure you have the base boxes installed.
-# vagrant box add bento/ubuntu-16.04
-# vagrant box add ubuntu/xenial64
+# NOTE: Make sure you have the base boxe installed.
+# $ vagrant box add bento/ubuntu-16.04
 
 Vagrant.configure("2") do |config|
-  # os boxes
+#
+# vagrant box configuration
+#
+  # box target
   config.vm.box         = "bento/ubuntu-16.04"
+
+  # box version
   config.vm.box_version = "2.3.8"
+
+  # box url to fetch if it isn't alreay installed on the user's host system
   config.vm.box_url     = "https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box"
 
-  # ubuntu xenial has issues...
-  #config.vm.box         = "ubuntu/xenial64"
-  #config.vm.box_version = "20170803.0.0"
-  #config.vm.box_url     = "https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20170803.0.0/providers/virtualbox.box"
 
-  config.vm.hostname    = "vagrant-ubuntu-16-04-box"
+#
+# general configuration
+#
+  # name to identify the vm using vagrant: '$ vagrant status'
+  config.vm.define :"vm-example" do |vgname|
+  end
 
-  # network
+  # name to identify the vm using virtualbox: '$ vboxmanage list vms'
+  config.vm.hostname    = "vagrant-vm-example-ubuntu-16-04-box"
+
+
+#
+# network configuration
+#
   #config.vm.base_mac    = "02C0E23C7112"
-
   #config.vm.network :private_network, ip: "192.168.0.19", nic_type: "82540EM",
   #                  virtualbox__intnet: true,
   #                  virtualbox__nic: "bridged",
@@ -29,44 +41,52 @@ Vagrant.configure("2") do |config|
   #                  virtualbox__bridgeadapter: "enp0s31f6",
   #                  virtualbox__macaddress: "auto"
 
-  # setup to forward port 80 on the VM to port 3000 on local machine
-  #config.vm.forward_port 80, 3000
 
-  # ssh
-  #config.ssh.private_key_path = "/path/to/id_rsa"
-
-  # virtualbox provider
+#
+# virtualbox provider
+#
   config.vm.provider :virtualbox do |vb|
-    # enable vm gui mode
-    vb.gui = true
+    # enable vm gui mode (display mode)
+    vb.gui    = true
 
-    # set vm name (in virtual box manager)
-    vb.customize ["modifyvm", :id, "--name", "vagrant-ubuntu-16-04-box"]
+    # customize virtualbox vm using vagrant shortcuts
+    vb.name   = "vagrant-ubuntu-16-04-box"
+    vb.cpus   = 1
+    vb.memory = 512
 
-    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50",
-                                   "--memory", "512",
-    ]
+    # virtual graphic card memory
+    vb.customize ["modifyvm", :id, "--vram", "64"]
 
-    # require to avoid to be blocked when connecting to guest ssh server
+    # GL: XXX: FIX: to avoid blocking when creating guest
+    # connect nic cable
     vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
   end
 
-  # shared folders, since agrant 1.1+ used synced folders
-  # config.vm.synced_folder "my_host_shared_folder", "/my_host_shared_folder",
-  #                         create: true, disabled: true
-  # config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
-  # puppet install to guest
+#
+# puppet on guest
+#
   config.vm.provision "shell", :inline => <<-SHELL
     apt-get update
     apt-get install -y puppet
   SHELL
 
-  # puppet provisioner setup
+
+#
+# puppet provisioner
+#
   config.vm.provision :puppet do |puppet|
     puppet.options          = "--verbose --debug"
     puppet.environment_path = "puppet"
     puppet.environment      = "environment"
     puppet.module_path      = "puppet/environment/modules"
   end
+
+
+#
+# shared folders // since agrant 1.1+ used synced folders
+#
+  config.vm.synced_folder "vagrant_user_shared_folder", "/vagrant_user_shared_folder", create: true
+
+
 end
