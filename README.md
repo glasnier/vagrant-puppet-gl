@@ -2,14 +2,18 @@
 
 Vagrant configuration using Puppet to setup a lot of stuffs.
 
+
 ### Examples
 
-    * vm-example: simple Ubuntu VM with basic softwares
+    * vm-example: simple VM VirtualBox based on Ubuntu with basic softwares
+
 
 ### Vagrant
 
 Vagrant is a tool for building and managing virtual machine environments in a
 single workflow.
+
+Vagrant is licensed under the MIT License.
 
 
 ##### Vagrant basic commands
@@ -21,6 +25,7 @@ single workflow.
     $ vagrant ssh                        // to connect using SSH (captain obvious)
     $ vagrant destroy -f                 // to destroy the VM and all files
     $ vagrant box add bento/xenial64     // to add Vagrant boxes (OS...)
+    $ vagrant status                     // to see VMs status (captain obvious)
 
 
 ##### Installing Vagrant
@@ -52,12 +57,29 @@ To add a Vagrant box: __bento/xenial64__
 The Vagrant Puppet provisioner allows you to provision the guest using Puppet,
 specifically by calling puppet apply, without a Puppet Master.
 
+Puppet is licensed under the Apache License, Version 2.0 (the "License").
+
 
 ##### Installing Puppet
 
     $ sudo apt-get install puppet
     $ puppet --version
     3.8.5
+
+
+### VirtualBox
+
+##### About VirtualBox
+
+VirtualBox is a powerful x86 and AMD64/Intel64 virtualization product for
+enterprise as well as home use. It is freely available as Open Source Software.
+
+VirutalBox is licensed under the GNU General Public License (GPL) version 2.
+
+
+##### Installing VirtualBox
+
+    $ sudo apt-get install virutalbox
 
 
 ### Links
