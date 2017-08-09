@@ -1,18 +1,25 @@
 # vm-example
 #
-# Box with essential packages and tools installed via Puppet.
+#   Box with essential packages and tools installed via Puppet.
 #
-# NOTE: Make sure you have the base boxes installed.
-# vagrant box add bento/ubuntu-16.04
-# vagrant box add ubuntu/xenial64
+# NOTE: Make sure you have the base box installed.
+# $ vagrant box add bento/ubuntu-16.04
+# $ vagrant box add ubuntu/xenial64
 
-Vagrant.configure("2") do |config|
-#
-# vagrant vox configuration
-#
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
 
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+#
+# vagrant box configuration
+#
+  # box target
   config.vm.box         = "bento/ubuntu-16.04"
+
+  # box version
   config.vm.box_version = "2.3.8"
+
+  # box url to fetch if it isn't alreay installed on the user's host system
   config.vm.box_url     = "https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box"
 
   # ubuntu xenial has issues...
@@ -23,7 +30,13 @@ Vagrant.configure("2") do |config|
 #
 # general configuration
 #
-  config.vm.hostname    = "vagrant-ubuntu-16-04-box"
+  # name to identify the vm using vagrant: '$ vagrant status'
+  config.vm.define :"vm-example" do |vgname|
+  end
+
+  # name to identify the vm using virtualbox: '$ vboxmanage list vms'
+  config.vm.hostname    = "vagrant-vm-example-ubuntu-16-04-box"
+
 
 #
 # network configuration
@@ -42,6 +55,7 @@ Vagrant.configure("2") do |config|
   # ssh
   #config.ssh.private_key_path = "/path/to/id_rsa"
 
+
 #
 # virtualbox provider
 #
@@ -54,28 +68,59 @@ Vagrant.configure("2") do |config|
     vb.cpus   = 1
     vb.memory = 512
 
+    # virtual graphic card memory
+    vb.customize ["modifyvm", :id, "--vram", "64"]
+
     # customize virtualbox vm using 'vboxmanage'
     #vb.customize ["modifyvm", :id, "--name", "vagrant-ubuntu-16-04-box"]
     #vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50",
     #                               "--memory", "512"]
 
+
+    # configure uart1 and set Linux debug console
+    vb.customize [ "modifyvm", :id, "--uart1", "0x3F8", "4" ]
+    vb.customize [ "modifyvm", :id, "--uartmode1", "file",
+                   File.join(Dir.pwd, "ubuntu-xenial-16.04-debug-console.log") ]
+
     # require to avoid to be blocked when connecting to guest ssh server
     vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
   end
 
+
 #
-# shared folders // since agrant 1.1+ used synced folders
+# bootstrap on guest
 #
-  config.vm.synced_folder "vagrant_user_shared_folder", "/vagrant_user_shared_folder", create: true
-  # config.vm.synced_folder ".", "/vagrant", create: true, disabled: true, type: "nfs"
+  #config.vm.provision :shell, :path => "scripts/bootstrap.sh"
+
 
 #
 # puppet on guest
 #
-  config.vm.provision "shell", :inline => <<-SHELL
+  config.vm.provision :shell, :inline => <<-SHELL
     apt-get update
     apt-get install -y puppet
   SHELL
+
+
+#
+# java openjdk-8-jdk
+#
+  config.vm.provision :shell, inline: <<-SHELL
+    add-apt-repository ppa:openjdk-r/ppa -y
+    apt-get update
+    echo "\n----- Installing Java 8 ------\n"
+    apt-get -y install apache2 openjdk-8-jdk
+    update-alternatives --config java
+  SHELL
+
+
+#
+# puppetlabs modules
+#
+  #config.vm.provision :shell do |shell|
+  #  shell.inline = "puppet module install puppetlabs/java --force --modulepath '/vagrant/puppet/environment/modules'"
+  #end
+
 
 #
 # puppet provisioner
@@ -84,6 +129,14 @@ Vagrant.configure("2") do |config|
     puppet.options          = "--verbose --debug"
     puppet.environment_path = "puppet"
     puppet.environment      = "environment"
-    puppet.module_path      = "puppet/modules"
+    puppet.module_path      = "puppet/environment/modules"
   end
+
+
+#
+# shared folders // since vagrant 1.1+ used synced folders
+#
+  config.vm.synced_folder "vagrant_user_shared_folder", "/vagrant_user_shared_folder", create: true
+  #config.vm.synced_folder ".", "/vagrant", create: true, disabled: true, type: "nfs"
+
 end
