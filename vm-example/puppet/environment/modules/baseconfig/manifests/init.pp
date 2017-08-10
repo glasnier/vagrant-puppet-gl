@@ -14,10 +14,11 @@ class baseconfig {
   }
 
   host { 'vagrant-vm-example-ubuntu-16-04-box':
-    ip => '192.168.0.1';
+    ip => '192.168.10.191';
+    #ip => '192.168.0.191';
   }
 
-#  package { [ 'tree', 'emacs', 'subversion', 'cmake' ]:
+  #package { [ 'tree', 'emacs', 'subversion', 'cmake' ]:
   package { ['tree']:
     ensure => present;
   }
