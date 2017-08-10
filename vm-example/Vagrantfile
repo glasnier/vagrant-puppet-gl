@@ -1,3 +1,6 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 # vm-example
 #
 #   Box with essential packages and tools installed via Puppet.
