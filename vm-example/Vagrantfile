@@ -8,7 +8,11 @@
 # NOTE: Make sure you have the base box installed.
 # $ vagrant box add bento/ubuntu-16.04
 
-# Vagrantfile API/syntax version
+# include configuration variables
+require_relative 'vagrant_vars.rb'
+include VagrantVars
+
+# API (syntax) version
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -21,13 +25,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
 
   # box target
-  config.vm.box         = "bento/ubuntu-16.04"
+  config.vm.box         = $vm_box
 
-  # box version
-  config.vm.box_version = "2.3.8"
+  # Box version constraints only work with boxes from Vagrant
+  # Cloud or a custom box host.
+  #config.vm.box_version = "2.3.8"
 
   # box url to fetch if it isn't already installed on the user's host system
-  config.vm.box_url     = "https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box"
+  config.vm.box_url     = $vm_box_url
 
 
   #
@@ -35,11 +40,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
 
   # name to identify the vm using vagrant: '$ vagrant status'
-  config.vm.define :"vm-example" do |vgname|
+  config.vm.define $vm_hostname do |vgname|
   end
 
   # name to identify the vm using virtualbox: '$ vboxmanage list vms'
-  config.vm.hostname    = "vagrant-vm-example-ubuntu-16-04-box"
+  config.vm.hostname    = $vm_hostname
 
 
   #
@@ -53,19 +58,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # well as any other machines on the same network, but cannot be accessed
   # (through this network interface) by any external networks.
   #config.vm.network :private_network, ip: "192.168.10.191"
-  #config.vm.network :private_network, ip: "192.168.0.191"
+  #config.vm.network :private_network, ip: $ip_address
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  config.vm.network :public_network, ip: "192.168.10.191"
-  #config.vm.network :public_network, ip: "192.168.0.191"
+  #config.vm.network :public_network, ip: "192.168.10.191"
+  config.vm.network :public_network, ip: $ip_address
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the guest vm from a port on the host machine. In the
   # example below, accessing "localhost:6998" will access port 80 on the
   # guest vm.
-  config.vm.network :forwarded_port, guest: 80, host: 6998
+  config.vm.network :forwarded_port, guest: 80, host: $host_port_to_forward,
+                    auto_correct: true
 
 
   #
@@ -101,21 +107,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # customize virtualbox vm using vagrant shortcuts
 
     # enable guest vm gui mode (display mode)
-    vb.gui    = true
+    vb.gui    = $enable_gui
 
     # guest vm name
-    vb.name   = "vagrant-ubuntu-16-04-box"
+    vb.name   = $vm_hostname
 
     # guest vm cpu number
-    vb.cpus   = 1
+    vb.cpus   = $number_of_cpus
 
     # guest vm virtual memory
-    vb.memory = 512
+    vb.memory = $amount_of_ram
 
     # customize virtualbox guest vm using '$ vboxmanage modifyvm'
 
     # guest vm virtual graphic card memory
-    vb.customize ["modifyvm", :id, "--vram", "64"]
+    vb.customize ["modifyvm", :id, "--vram", $video_ram]
+
+    # resize guest vm disk
+    #vb.customize ["modifyhd", "<disk id>", "--resize", "<size in megabytes>"]
 
     # GL: XXX: FIX: to avoid blocking when creating guest
     # connect nic cable on guest vm
