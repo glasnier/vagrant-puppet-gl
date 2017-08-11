@@ -7,16 +7,23 @@
 #
 
 module VagrantVars
-  $vm_hostname          = 'vagrant-vm-example-ub16.04'
-
+  # box
   $vm_box               = 'bento/ubuntu-16.04'
   $vm_box_url           = 'https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box'
 
-  $ip_address           = '192.168.0.191'
-  $host_port_to_forward = 6998
+  # hostname
+  $vm_hostname          = 'vagrant-vm-example'
 
-  $enable_gui           = true
-  $number_of_cpus       = 1     # number of CPUS
-  $amount_of_ram        = 512   # amount of ram       (MBytes)
-  $video_ram            = 64    # amount of video ram (MBytes)
+  # network
+  #$vm_ip_address        = '192.168.0.191'
+  $vm_ip_address        = '192.168.0.191'
+  $host_port_tft        = 6998  # host port to forwared guest vm port 80 to
+
+  # gui
+  $enable_gui           = true  # enable display mode
+
+  # virtual hardware
+  $number_of_cpus       = 1     # number of virtual CPUs
+  $amount_of_ram        = 512   # amount of virtual ram           (MBytes)
+  $video_ram            = 64    # amount of graphical video memory (MBytes)
 end
