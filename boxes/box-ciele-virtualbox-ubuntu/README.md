@@ -5,7 +5,7 @@
 This folder contains all the information and materials to build the
 CIELE VirtualBox Vagrant box.
 
-This box is based on Ubuntu Server 16.01.01 LTS.
+This box is based on Ubuntu Server 16.04.1 LTS.
 
 
 ## Requirements
