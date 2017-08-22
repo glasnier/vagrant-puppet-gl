@@ -1,0 +1,173 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# vm-ciele
+#
+#   Box with essential packages and tools installed via Puppet.
+#
+# NOTE: CIELE Vagrant box 'ciele/ubuntu-16.04' available from the R&D server.
+
+# include configuration variables
+require_relative 'vagrant_vars.rb'
+include VagrantVars
+
+# API (syntax) version
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  #
+  # BOX configuration
+  #
+
+  # box target
+  config.vm.box         = $vm_box
+
+  # Box version constraints only work with boxes from Vagrant
+  # Cloud or a custom box host.
+  #config.vm.box_version = "0.1.0"
+
+  # box url to fetch if it isn't already installed on the user's host system
+  config.vm.box_url     = $vm_box_url
+
+
+  #
+  # GENERAL configuration
+  #
+
+  # name to identify the vm using vagrant: '$ vagrant status'
+  config.vm.define $vm_hostname do |vgname|
+  end
+
+  # name to identify the vm using virtualbox: '$ vboxmanage list vms'
+  config.vm.hostname    = $vm_hostname
+
+
+  #
+  # NETWORK configuration
+  #
+
+  #config.vm.base_mac    = "02C0E23C7112"
+
+  # Create a private network, which allows host-only access to the guest vm
+  # using a specific IP. Host-only networks can talk to the host machine as
+  # well as any other machines on the same network, but cannot be accessed
+  # (through this network interface) by any external networks.
+  #config.vm.network :private_network, ip: "192.168.10.190"
+  #config.vm.network :private_network, ip: $vm_ip_address
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  #config.vm.network :public_network, ip: "192.168.10.190"
+  config.vm.network :public_network, ip: $vm_ip_address
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the guest vm from a port on the host machine. In the
+  # example below, accessing "localhost:6998" will access port 80 on the
+  # guest vm.
+  config.vm.network :forwarded_port, guest: 80, host: $host_port_tft,
+                    auto_correct: true
+
+
+  #
+  # ADDITIONAL configuration
+  #
+
+  # set locale
+  config.vm.provision :shell, :inline => <<-SHELL
+    locale-gen "en_US.UTF-8"
+    dpkg-reconfigure --frontend noninteractive locales
+  SHELL
+
+  # set timezone
+  config.vm.provision :shell, :inline => <<-SHELL
+    echo \"Europe/Paris\" | sudo tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+  SHELL
+
+
+  #
+  #
+  # PROVIDER configuration
+  #
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # View the documentation for the provider you're using for more
+  # information on available options.
+
+  # VirtualBox provider
+
+  # use 'vboxmanage' to customize the guest vm
+  config.vm.provider :virtualbox do |vb|
+    # customize virtualbox vm using vagrant shortcuts
+
+    # enable guest vm gui mode (display mode)
+    vb.gui    = $enable_gui
+
+    # guest vm name
+    vb.name   = $vm_hostname
+
+    # guest vm cpu number
+    vb.cpus   = $number_of_cpus
+
+    # guest vm virtual memory
+    vb.memory = $amount_of_ram
+
+    # customize virtualbox guest vm using '$ vboxmanage modifyvm'
+
+    # guest vm virtual graphic card memory
+    vb.customize ["modifyvm", :id, "--vram", $video_ram]
+
+    # resize guest vm disk
+    #vb.customize ["modifyhd", "<disk id>", "--resize", "<size in megabytes>"]
+
+    # GL: XXX: FIX: to avoid blocking when creating guest
+    # connect nic cable on guest vm
+    vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+  end
+
+
+  # PROVISIONER configuration
+
+  # Puppet on guest
+
+  # enable provisioning with Puppet on guest vm
+  config.vm.provision :shell, :inline => <<-SHELL
+    apt-get update
+    apt-get install -y --no-install-recommends puppet
+  SHELL
+
+  # Puppet provisioner
+
+  # Enable provisioning with Puppet standalone. Puppet manifests
+  # are contained in a directory path relative to this Vagrantfile.
+  # You will need to create the manifests directory and a manifest file
+  # in the puppet environment directory.
+  config.vm.provision :puppet do |puppet|
+    puppet.options          = "--verbose --debug"
+    puppet.environment_path = "puppet"
+    puppet.environment      = "environment"
+    puppet.module_path      = "puppet/environment/modules"
+  end
+
+
+  #
+  # SHARED FOLDERS configuration  since vagrant 1.1+ used synced folders
+  #
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options. Since v1.1+ Vagrant uses
+  # synced folders.
+  # config.vm.synced_folder ".", "/vagrant" # DEFAULT
+  config.vm.synced_folder "vagrant_user_shared_folder",
+                          "/vagrant_user_shared_folder",
+                          create: true
+
+
+end
