@@ -15,8 +15,8 @@ module VagrantVars
   $vm_hostname          = 'vagrant-vm-example'
 
   # network
+  $vm_ip_address        = '192.168.10.191'
   #$vm_ip_address        = '192.168.0.191'
-  $vm_ip_address        = '192.168.0.191'
   $host_port_tft        = 6998  # host port to forwared guest vm port 80 to
 
   # gui
