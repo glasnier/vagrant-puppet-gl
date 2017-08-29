@@ -23,11 +23,10 @@ class baseconfig {
     ensure => present;
   }
 
-  file {
-    '/home/vagrant/dlrowolleh':
-      owner => 'vagrant',
-      group => 'vagrant',
-      mode  => '0755',
-      source => 'puppet:///modules/baseconfig/dlrowolleh';
+  file { '/home/vagrant/dlrowolleh':
+    owner => 'vagrant',
+    group => 'vagrant',
+    mode  => '0755',
+    source => 'puppet:///modules/baseconfig/dlrowolleh';
   }
 }
