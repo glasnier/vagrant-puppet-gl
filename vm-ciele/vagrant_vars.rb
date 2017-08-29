@@ -15,6 +15,7 @@ module VagrantVars
   $vm_hostname          = 'vagrant-vm-ciele'
 
   # network
+  $vm_bridge_nw_itf     = 'enp0s31f6'
   $vm_ip_address        = '192.168.10.190'
   $host_port_tft        = 6998  # host port to forwared guest vm port 80 to
 

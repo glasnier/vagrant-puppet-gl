@@ -63,7 +63,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Bridged networks make the machine appear as another physical device on
   # your network.
   #config.vm.network :public_network, ip: "192.168.10.190"
-  config.vm.network :public_network, ip: $vm_ip_address
+  config.vm.network :public_network, bridge: $vm_bridge_nw_itf,
+                    ip: $vm_ip_address
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the guest vm from a port on the host machine. In the
