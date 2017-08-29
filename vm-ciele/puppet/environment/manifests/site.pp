@@ -1,11 +1,10 @@
-# create a new run stage to ensure certain modules are included first
-stage { 'pre':
-  before => Stage['main']
-}
+# create new run stages to ensure certain modules are included first
+stage { 'pre':  before  => Stage['main'] }
+stage { 'post': require => Stage['main'] }
 
 # add the baseconfig module to the new 'pre' run stage
-class { 'baseconfig':
-  stage => 'pre'
+class {
+  'baseconfig': stage => 'pre';
 }
 
 # set defaults for file ownership/permissions
@@ -15,5 +14,14 @@ File {
   mode  => '0644',
 }
 
-include users
+class { 'users::simple':
+  stage => 'pre',
+  username => 'ciele2'
+}
+
+class { 'users::admin':
+  stage => 'pre',
+  username => 'ciele'
+}
+
 include baseconfig
