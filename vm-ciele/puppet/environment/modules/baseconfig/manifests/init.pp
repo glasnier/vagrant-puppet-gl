@@ -13,11 +13,11 @@ class baseconfig {
     command => '/usr/bin/apt-get update';
   }
 
-  host { 'vagrant-vm-example-ubuntu-16-04-box':
+  host { 'vagrant-vm-ciele':
     ip => '192.168.10.190';
   }
 
-  #package { [ 'tree', 'emacs', 'subversion', 'cmake' ]:
+  #package { [ 'tree', 'emacs', 'subversion', 'cmake', 'git' ]:
   package { ['tree']:
     ensure => present;
   }
