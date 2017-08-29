@@ -6,7 +6,7 @@ Vagrant configuration using Puppet to setup a lot of stuffs.
 ### Examples
 
     * vm-example/: simple VM VirtualBox based on Ubuntu with basic softwares
-    * vm-example/: basic customized CIELE VM based on VirtualBox and Ubuntu
+    * vm-ciele/  : basic customized CIELE VM based on VirtualBox and Ubuntu
     * boxes/     : instructions and materials to build Vagrant customized boxes
 
 
