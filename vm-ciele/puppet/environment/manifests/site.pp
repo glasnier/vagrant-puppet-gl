@@ -14,14 +14,19 @@ File {
   mode  => '0644',
 }
 
-class { 'users::simple':
-  stage => 'pre',
-  username => 'ciele2'
+# set the main user as administrator
+$user = "ciele"
+
+class {
+  'users::admin':
+   stage => 'pre',
+   username => $user
 }
 
-class { 'users::admin':
-  stage => 'pre',
-  username => 'ciele'
+class {
+  'directory_tree':
+   stage => 'pre',
+   username => $user
 }
 
 include baseconfig
