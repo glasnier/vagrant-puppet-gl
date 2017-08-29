@@ -1,0 +1,36 @@
+-- folder: workstation
+
+
+-----------------------
+File and directory list
+-----------------------
+
+compilers/*              (d)  Compilers for project
+
+documentation/*          (d)  Basic documentation
+
+projects/*               (d)  Base folder for project outputs
+
+repositories/*           (d)  GIT, SVN and CVS repositories
+
+scripts/*                (d)  Scripts for general user administration
+
+tools/*                  (d)  Specific tools, libraries and applications
+
+
+README                   (f)  This README file
+
+
+(a: archive; d: directory; r: remote svn file or directory; f: file)
+
+
+-----------
+Description
+-----------
+
+This folder is the 'workstation' for every project development.
+
+Please, refer to your project manager to get access to all project resources.
+
+
+-- EOF
