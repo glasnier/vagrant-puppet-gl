@@ -20,13 +20,14 @@ class baseconfig {
 
   #package { [ 'tree', 'emacs', 'subversion', 'cmake' ]:
   package { ['tree']:
-    ensure => present;
+    ensure => present,
   }
 
-  file { '/home/vagrant/dlrowolleh':
-    owner => 'vagrant',
-    group => 'vagrant',
-    mode  => '0755',
-    source => 'puppet:///modules/baseconfig/dlrowolleh';
+  file { "/home/vagrant/dlrowolleh":
+    ensure => file,
+    owner  => 'vagrant',
+    group  => 'vagrant',
+    mode   => '0755',
+    source => 'puppet:///modules/baseconfig/dlrowolleh',;
   }
 }

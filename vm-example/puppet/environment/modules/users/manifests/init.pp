@@ -10,7 +10,7 @@
 #
 class users {
   user { 'gil':
-    ensure           => 'present',
+    ensure           => present,
     managehome       => 'true',
     comment          => 'Gilles Lasnier',
     groups           => ['adm', 'dialout', 'cdrom', 'sudo', 'dip', 'plugdev', 'lpadmin'],
@@ -22,10 +22,10 @@ class users {
     password_min_age => '0',
   }
 
-  file { '/home/gil':
-    ensure => 'directory',
+  file { "/home/gil":
+    ensure => directory,
     owner  => 'gil',
     group  => 'gil',
-    mode   => '0755'
+    mode   => '0755',
   }
 }
