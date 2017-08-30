@@ -29,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Box version constraints only work with boxes from Vagrant
   # Cloud or a custom box host.
-  #config.vm.box_version = "2.3.8"
+  config.vm.box_version = "2.3.8"
 
   # box url to fetch if it isn't already installed on the user's host system
   config.vm.box_url     = $vm_box_url

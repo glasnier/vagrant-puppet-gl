@@ -9,7 +9,7 @@
 module VagrantVars
   # box
   $vm_box               = 'bento/ubuntu-16.04'
-  $vm_box_url           = 'https://vagrantcloud.com/bento/boxes/ubuntu-16.04/versions/2.3.8/providers/virtualbox.box'
+  $vm_box_url           = 'https://vagrantcloud.com/bento/boxes/ubuntu-16.04'
 
   # hostname
   $vm_hostname          = 'vagrant-vm-example'
