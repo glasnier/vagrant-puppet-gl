@@ -24,14 +24,11 @@ class directory_tree (
                     "/home/${username}/workstation/tools",
                   ]
 
-  # spell out "magic" iteration
-  $whisper_dirs.each |$path| {
-    file { $path:
+  file { $whisper_dirs:
       ensure => directory,
       owner  => "${username}",
       group  => "${username}",
       mode   => '0755',
-    }
   }
 
   file { "/home/${username}/workstation/README":
