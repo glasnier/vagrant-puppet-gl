@@ -1,6 +1,11 @@
 # create new run stages to ensure certain modules are included first
-stage { 'pre':  before  => Stage['main'] }
-stage { 'post': require => Stage['main'] }
+stage { 'pre':
+  before  => Stage['main'],
+}
+
+stage { 'post':
+  require => Stage['main'],
+}
 
 # set defaults for file ownership/permissions
 File {
@@ -15,7 +20,7 @@ class { 'baseconfig':
 }
 
 # set the main user as administrator
-s$user = "ciele"
+$user = "ciele"
 
 class { 'users::admin':
    stage => 'pre',
